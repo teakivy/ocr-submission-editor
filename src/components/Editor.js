@@ -1,75 +1,86 @@
 import React, { useState } from "react";
 import "../styles/editor.scss";
-import { CirclePicker } from "react-color";
 import DrawingPanel from "./DrawingPanel";
 
 export default function Editor() {
-  const [panelWidth, setPanelWidth] = useState(16);
-  const [panelHeight, setPanelHeight] = useState(16);
-  const [hideOptions, setHideOptions] = useState(false);
-  const [hideDrawingPanel, setHideDrawingPanel] = useState(true);
-  const [buttonText, setButtonText] = useState("start drawing");
-  const [selectedColor, setColor] = useState("#f44336");
+	const userID = Math.floor(Math.random() * 1000000000);
+	const [panelWidth, setPanelWidth] = useState(28);
+	const [panelHeight, setPanelHeight] = useState(28);
+	const [hideOptions, setHideOptions] = useState(false);
+	const [hideDrawingPanel, setHideDrawingPanel] = useState(false);
+	const [buttonText, setButtonText] = useState("start drawing");
+	const [selectedColor, setColor] = useState("#000000");
 
-  function initializeDrawingPanel() {
-    setHideOptions(!hideOptions);
-    setHideDrawingPanel(!hideDrawingPanel);
+	const [finished, setFinished] = useState(false);
 
-    buttonText === "start drawing"
-      ? setButtonText("reset")
-      : setButtonText("start drawing");
-  }
+	const [number, setNumber] = useState(0);
 
-  function changeColor(color) {
-    setColor(color.hex);
-  }
+	function initializeDrawingPanel() {
+		setHideOptions(!hideOptions);
+		setHideDrawingPanel(!hideDrawingPanel);
 
-  return (
-    <div id="editor">
-      <h1>Pixel Editor</h1>
-      {hideDrawingPanel && <h2>Enter Panel Dimensions</h2>}
-      {hideDrawingPanel && (
-        <div id="options">
-          <div className="option">
-            <input
-              type="number"
-              className="panelInput"
-              defaultValue={panelWidth}
-              onChange={(e) => {
-                setPanelWidth(e.target.value);
-              }}
-            />
-            <span>Width</span>
-          </div>
-          <div className="option">
-            <input
-              type="number"
-              className="panelInput"
-              defaultValue={panelHeight}
-              onChange={(e) => {
-                setPanelHeight(e.target.value);
-              }}
-            />
-            <span>Height</span>
-          </div>
-        </div>
-      )}
+		buttonText === "start drawing"
+			? setButtonText("reset")
+			: setButtonText("start drawing");
+	}
 
-      <button onClick={initializeDrawingPanel} className="button">
-        {buttonText}
-      </button>
+	return !finished ? (
+		<div id="editor">
+			<h1>Draw the number " {number} "</h1>
 
-      {hideOptions && (
-        <CirclePicker color={selectedColor} onChangeComplete={changeColor} />
-      )}
+			<button onClick={initializeDrawingPanel} className="button">
+				{buttonText}
+			</button>
 
-      {hideOptions && (
-        <DrawingPanel
-          width={panelWidth}
-          height={panelHeight}
-          selectedColor={selectedColor}
-        />
-      )}
-    </div>
-  );
+			{hideOptions && (
+				<DrawingPanel
+					width={panelWidth}
+					height={panelHeight}
+					selectedColor={selectedColor}
+					fileName={`${number}_${userID}`}
+				/>
+			)}
+
+			{buttonText === "reset" && (
+				<button
+					onClick={() => {
+						setNumber(number + 1);
+
+						if (number === 9) {
+							setFinished(true);
+						}
+
+						initializeDrawingPanel();
+					}}
+					className="button"
+				>
+					Next
+				</button>
+			)}
+		</div>
+	) : (
+		<div id="editor">
+			<h1>Thank You!</h1>
+			<h2>Here, take some cookies for your hard work</h2>
+
+			<img
+				src="https://images.aws.nestle.recipes/original/5b069c3ed2feea79377014f6766fcd49_Original_NTH_Chocolate_Chip_Cookie.jpg"
+				alt="cookie"
+				width={500}
+				style={{ borderRadius: "10px", marginBottom: "20px" }}
+			/>
+
+			<button
+				onClick={() => {
+					setFinished(false);
+					setNumber(0);
+				}}
+				className="button"
+			>
+				Start Over
+			</button>
+
+			<p>Unique User ID: {userID}</p>
+		</div>
+	);
 }

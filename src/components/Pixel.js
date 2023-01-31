@@ -1,38 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/pixel.scss";
 
 export default function Pixel(props) {
-  const { selectedColor } = props;
+	const { selectedColor } = props;
 
-  const [pixelColor, setPixelColor] = useState("#fff");
-  const [oldColor, setOldColor] = useState(pixelColor);
-  const [canChangeColor, setCanChangeColor] = useState(true);
+	const [pixelColor, setPixelColor] = useState("#fff");
+	const [oldColor, setOldColor] = useState(pixelColor);
+	const [canChangeColor, setCanChangeColor] = useState(true);
+	const [mouseDown, setMouseDown] = useState(false);
 
-  function applyColor() {
-    setPixelColor(selectedColor);
-    setCanChangeColor(false);
-  }
+	// once registered
+	useEffect(() => {
+		// register mouse down event
+		document.addEventListener("mousedown", () => {
+			setMouseDown(true);
+		});
 
-  function changeColorOnHover() {
-    setOldColor(pixelColor);
-    setPixelColor(selectedColor);
-  }
+		// register mouse up event
+		document.addEventListener("mouseup", () => {
+			setMouseDown(false);
+		});
+	}, []);
 
-  function resetColor() {
-    if (canChangeColor) {
-      setPixelColor(oldColor);
-    }
+	function applyColor() {
+		setPixelColor(selectedColor);
+		setCanChangeColor(false);
+	}
 
-    setCanChangeColor(true);
-  }
+	function changeColorOnHover() {
+		setOldColor(pixelColor);
+		setPixelColor(selectedColor);
+	}
 
-  return (
-    <div
-      className="pixel"
-      onClick={applyColor}
-      onMouseEnter={changeColorOnHover}
-      onMouseLeave={resetColor}
-      style={{ backgroundColor: pixelColor }}
-    ></div>
-  );
+	function resetColor() {
+		if (canChangeColor && !mouseDown) {
+			setPixelColor(oldColor);
+		}
+
+		setCanChangeColor(true);
+	}
+
+	return (
+		<div
+			className="pixel"
+			onClick={applyColor}
+			onMouseEnter={changeColorOnHover}
+			onMouseLeave={resetColor}
+			style={{ backgroundColor: pixelColor }}
+		></div>
+	);
 }
