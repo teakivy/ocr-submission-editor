@@ -3,7 +3,7 @@ import "../styles/editor.scss";
 import DrawingPanel from "./DrawingPanel";
 // import { addDoc, collection } from "firebase/firestore";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../core/firebase";
+import { db, sendData } from "../core/firebase";
 
 export default function Editor() {
 	const userID = Math.floor(Math.random() * 1000000000);
@@ -56,13 +56,14 @@ export default function Editor() {
 			{buttonText === "reset" && (
 				<button
 					onClick={() => {
-						setImages([...images, imageToString(image)]);
+						let imgs = [...images, imageToString(image)];
+						setImages(imgs);
 
 						image = getBlankImage(panelWidth, panelHeight);
 						setNumber(number + 1);
 
 						if (number === 9) {
-							sendToFirebase(images, userID);
+							sendToFirebase(imgs, userID);
 
 							setFinished(true);
 						}
@@ -133,13 +134,11 @@ function imageToString(image) {
 }
 
 async function sendToFirebase(images, userID) {
-	const docRef = doc(db, "data", userID);
-
 	let data = {};
 
 	for (let i = 0; i < images.length; i++) {
-		data[`${i}`] = images[i];
+		data[`n${i}`] = images[i];
 	}
 
-	await setDoc(docRef, data);
+	await setDoc(doc(db, "data", `${userID}`), data);
 }
