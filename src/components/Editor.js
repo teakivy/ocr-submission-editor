@@ -15,6 +15,8 @@ export default function Editor() {
 
 	const [number, setNumber] = useState(0);
 
+	let image = getBlankImage(panelWidth, panelHeight);
+
 	function initializeDrawingPanel() {
 		setHideOptions(!hideOptions);
 		setHideDrawingPanel(!hideDrawingPanel);
@@ -22,6 +24,11 @@ export default function Editor() {
 		buttonText === "start drawing"
 			? setButtonText("reset")
 			: setButtonText("start drawing");
+	}
+
+	function onChange(x, y) {
+		image[y][x] = 1;
+		console.log(image);
 	}
 
 	return !finished ? (
@@ -38,12 +45,14 @@ export default function Editor() {
 					height={panelHeight}
 					selectedColor={selectedColor}
 					fileName={`${number}_${userID}`}
+					onChange={onChange}
 				/>
 			)}
 
 			{buttonText === "reset" && (
 				<button
 					onClick={() => {
+						image = getBlankImage(panelWidth, panelHeight);
 						setNumber(number + 1);
 
 						if (number === 9) {
@@ -83,4 +92,20 @@ export default function Editor() {
 			<p>Unique User ID: {userID}</p>
 		</div>
 	);
+}
+
+function getBlankImage(width, height) {
+	const image = [];
+
+	for (let i = 0; i < height; i++) {
+		const row = [];
+
+		for (let j = 0; j < width; j++) {
+			row.push(0);
+		}
+
+		image.push(row);
+	}
+
+	return image;
 }

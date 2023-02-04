@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/pixel.scss";
 
 export default function Pixel(props) {
-	const { selectedColor } = props;
+	const { selectedColor, x, y, onChange } = props;
 
 	const [pixelColor, setPixelColor] = useState("#fff");
 	const [oldColor, setOldColor] = useState(pixelColor);
@@ -25,15 +25,18 @@ export default function Pixel(props) {
 	function applyColor() {
 		setPixelColor(selectedColor);
 		setCanChangeColor(false);
+
+		onChange(x, y);
 	}
 
 	function changeColorOnHover() {
 		setOldColor(pixelColor);
 		setPixelColor(selectedColor);
+		onChange(x, y);
 	}
 
 	function resetColor() {
-		if (canChangeColor && !mouseDown) {
+		if (canChangeColor) {
 			setPixelColor(oldColor);
 		}
 
@@ -44,8 +47,9 @@ export default function Pixel(props) {
 		<div
 			className="pixel"
 			onClick={applyColor}
-			onMouseEnter={changeColorOnHover}
-			onMouseLeave={resetColor}
+			onDragOver={changeColorOnHover}
+			onDragStart={changeColorOnHover}
+			onDragEnter={changeColorOnHover}
 			style={{ backgroundColor: pixelColor }}
 		></div>
 	);
