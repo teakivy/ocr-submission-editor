@@ -61,7 +61,7 @@ export default function Editor() {
 						image = getBlankImage(panelWidth, panelHeight);
 						setNumber(number + 1);
 
-						if (number === 2) {
+						if (number === 9) {
 							sendToFirebase(images, userID);
 
 							setFinished(true);
