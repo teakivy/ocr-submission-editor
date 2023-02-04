@@ -25,21 +25,19 @@ export default function DrawingPanel(props) {
 	// make an image that follows the cursor
 
 	useEffect(() => {
-		const panel = document.getElementById("pixels");
-		const cursor = document.getElementById("cursor");
-
-		panel.addEventListener("mousemove", (e) => {
-			cursor.style.left = e.clientX - 10 + "px";
-			cursor.style.top = e.clientY - 10 + "px";
-		});
+		// const panel = document.getElementById("pixels");
+		// const cursor = document.getElementById("cursor");
+		// panel.addEventListener("mousemove", (e) => {
+		// 	cursor.style.left = e.clientX - 10 + "px";
+		// 	cursor.style.top = e.clientY - 10 + "px";
+		// });
 	}, []);
 
 	return (
 		<div id="drawingPanel">
-			<div id="cursor">
-				{/* hello */}
+			{/* <div id="cursor">
 				<img alt="cursor" src={require("../assets/transparent.png")} />
-			</div>
+			</div> */}
 
 			<div id="pixels" ref={panelRef}>
 				{rows}

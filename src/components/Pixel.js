@@ -26,18 +26,23 @@ export default function Pixel(props) {
 		setPixelColor(selectedColor);
 		setCanChangeColor(false);
 
-		onChange(x, y);
+		onChange(x, y, 1);
 	}
 
 	function changeColorOnHover() {
 		setOldColor(pixelColor);
 		setPixelColor(selectedColor);
-		onChange(x, y);
+		onChange(x, y, 1);
+
+		if (mouseDown) {
+			applyColor();
+		}
 	}
 
 	function resetColor() {
-		if (canChangeColor) {
+		if (canChangeColor && !mouseDown) {
 			setPixelColor(oldColor);
+			onChange(x, y, 0);
 		}
 
 		setCanChangeColor(true);
@@ -47,9 +52,8 @@ export default function Pixel(props) {
 		<div
 			className="pixel"
 			onClick={applyColor}
-			onDragOver={changeColorOnHover}
-			onDragStart={changeColorOnHover}
-			onDragEnter={changeColorOnHover}
+			onMouseEnter={changeColorOnHover}
+			onMouseLeave={resetColor}
 			style={{ backgroundColor: pixelColor }}
 		></div>
 	);

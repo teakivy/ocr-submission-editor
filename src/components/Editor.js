@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "../styles/editor.scss";
 import DrawingPanel from "./DrawingPanel";
+// import { addDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../core/firebase";
 
 export default function Editor() {
 	const userID = Math.floor(Math.random() * 1000000000);
@@ -17,6 +20,8 @@ export default function Editor() {
 
 	let image = getBlankImage(panelWidth, panelHeight);
 
+	const [images, setImages] = useState([]);
+
 	function initializeDrawingPanel() {
 		setHideOptions(!hideOptions);
 		setHideDrawingPanel(!hideDrawingPanel);
@@ -26,9 +31,8 @@ export default function Editor() {
 			: setButtonText("start drawing");
 	}
 
-	function onChange(x, y) {
-		image[y][x] = 1;
-		console.log(image);
+	function onChange(x, y, value) {
+		image[y][x] = value;
 	}
 
 	return !finished ? (
@@ -52,10 +56,14 @@ export default function Editor() {
 			{buttonText === "reset" && (
 				<button
 					onClick={() => {
+						setImages([...images, imageToString(image)]);
+
 						image = getBlankImage(panelWidth, panelHeight);
 						setNumber(number + 1);
 
-						if (number === 9) {
+						if (number === 2) {
+							sendToFirebase(images, userID);
+
 							setFinished(true);
 						}
 
@@ -108,4 +116,30 @@ function getBlankImage(width, height) {
 	}
 
 	return image;
+}
+
+function imageToString(image) {
+	let string = "";
+
+	for (let i = 0; i < image.length; i++) {
+		for (let j = 0; j < image[i].length; j++) {
+			string += image[i][j];
+		}
+
+		string += "\n";
+	}
+
+	return string;
+}
+
+async function sendToFirebase(images, userID) {
+	const docRef = doc(db, "data", userID);
+
+	let data = {};
+
+	for (let i = 0; i < images.length; i++) {
+		data[`${i}`] = images[i];
+	}
+
+	await setDoc(docRef, data);
 }
